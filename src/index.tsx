@@ -1,48 +1,38 @@
-import React, { useState } from 'react';
-import './TicTacToe.css';
+import React, { useState} from 'react'
+import ReactDOM from 'react-dom';
+import "./index.css"
 
-const TicTacToe = () => {
-	const [turn, setTurn] = useState('x');
+
+
+
+
+const TicTacToe: React.FC = () => {
+	const [turn, setTurn] = useState<string >('x');
 	const [cells, setCells] = useState(Array(9).fill(''));
-	const [winner, setWinner] = useState();
+	const [winner, setWinner] = useState<null>();
 
 	const checkForWinner = (squares) => {
-		let combos = {
-			across: [
-				[0, 1, 2],
-				[3, 4, 5],
-				[6, 7, 8],
-			],
-			down: [
-				[0, 3, 6],
-				[1, 4, 7],
-				[2, 5, 8],
-			],
-			diagnol: [
-				[0, 4, 8],
-				[2, 4, 6],
-			],
-		};
+		const lines = [
+			[0, 1, 2],
+			[3, 4, 5],
+			[6, 7, 8],
+			[0, 3, 6],
+			[1, 4, 7],
+			[2, 5, 8],
+			[0, 4, 8],
+			[2, 4, 6]
+		  ];
 
-		for (let combo in combos) {
-			combos[combo].forEach((pattern) => {
-				if (
-					squares[pattern[0]] === '' ||
-					squares[pattern[1]] === '' ||
-					squares[pattern[2]] === ''
-				) {
-					// do nothing
-				} else if (
-					squares[pattern[0]] === squares[pattern[1]] &&
-					squares[pattern[1]] === squares[pattern[2]]
-				) {
-					setWinner(squares[pattern[0]]);
-				}
-			});
-		}
+		for (let i = 0; i < lines.length; i++) {
+			const [a, b, c] = lines[i];
+			if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+			  return squares[a];
+			}
+		  }
+		  return null;
 	};
 
-	const handleClick = (num) => {
+	const handleClick = (num:number) => {
 		if (cells[num] !== '') {
 			alert('already clicked');
 			return;
@@ -67,7 +57,11 @@ const TicTacToe = () => {
 		setCells(Array(9).fill(''));
 	};
 
-	const Cell = ({ num }) => {
+	type CellProps ={
+        num: number;
+	}
+	
+	const Cell  = ({ num }:CellProps) => {
 		return <td onClick={() => handleClick(num)}>{cells[num]}</td>;
 	};
 
@@ -103,4 +97,6 @@ const TicTacToe = () => {
 	);
 };
 
-export default TicTacToe;
+
+
+ReactDOM.render(<TicTacToe/>, document.getElementById("root"));
