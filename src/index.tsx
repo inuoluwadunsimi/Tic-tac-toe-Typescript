@@ -7,29 +7,47 @@ import "./index.css"
 
 
 const TicTacToe: React.FC = () => {
-	const [turn, setTurn] = useState<string >('x');
+	const [turn, setTurn] = useState<string >('X');
 	const [cells, setCells] = useState(Array(9).fill(''));
-	const [winner, setWinner] = useState<null>();
+	const [winner, setWinner] = useState<null|number|string>();
 
-	const checkForWinner = (squares) => {
-		const lines = [
-			[0, 1, 2],
-			[3, 4, 5],
-			[6, 7, 8],
-			[0, 3, 6],
-			[1, 4, 7],
-			[2, 5, 8],
-			[0, 4, 8],
-			[2, 4, 6]
-		  ];
 
-		for (let i = 0; i < lines.length; i++) {
-			const [a, b, c] = lines[i];
-			if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-			  return squares[a];
-			}
-		  }
-		  return null;
+	
+
+	const checkForWinner = (squares:number[]|string) => {
+		let combos= {
+			across: [
+				[0, 1, 2],
+				[3, 4, 5],
+				[6, 7, 8],
+			],
+			down: [
+				[0, 3, 6],
+				[1, 4, 7],
+				[2, 5, 8],
+			],
+			diagnol: [
+				[0, 4, 8],
+				[2, 4, 6],
+			],
+		};
+
+		for (let combo in combos) {
+			combos[combo as keyof typeof combos].forEach((pattern:number[]) => {
+				if (
+					squares[pattern[0]] === '' ||
+					squares[pattern[1]] === '' ||
+					squares[pattern[2]] === ''
+				) {
+					//  nothing is to be done
+				} else if (
+					squares[pattern[0]] === squares[pattern[1]] &&
+					squares[pattern[1]] === squares[pattern[2]]
+				) {
+					setWinner(squares[pattern[0]]);
+				}
+			});
+		}
 	};
 
 	const handleClick = (num:number) => {
@@ -40,16 +58,17 @@ const TicTacToe: React.FC = () => {
 
 		let squares = [...cells];
 
-		if (turn === 'x') {
-			squares[num] = 'x';
-			setTurn('o');
+		if (turn === 'X') {
+			squares[num] = 'O';
+			setTurn('O');
 		} else {
-			squares[num] = 'o';
-			setTurn('x');
+			squares[num] = 'O';
+			setTurn('X');
 		}
 
 		checkForWinner(squares);
-		setCells(squares);
+		 const on = setCells(squares);
+		 console.log(on);
 	};
 
 	const handleRestart = () => {
@@ -71,7 +90,7 @@ const TicTacToe: React.FC = () => {
 				Turn: {turn}
 				<tbody>
 					<tr>
-						<Cell num={0} />
+						<Cell  num={0} />
 						<Cell num={1} />
 						<Cell num={2} />
 					</tr>
